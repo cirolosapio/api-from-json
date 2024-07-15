@@ -1,0 +1,21 @@
+services:
+  apifromjson:
+    image: nginx:alpine-slim
+    volumes:
+      - ..:/var/www/html:cached
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    labels:
+      - traefik.http.routers.apifromjson.rule=Host(`apifromjson.localhost`)
+      - traefik.http.routers.apifromjson.tls=true
+
+  app:
+    build: .
+    volumes:
+      - ..:/var/www/html:cached
+      - ~/.composer:/home/vscode/.composer:rw
+      - ~/.zsh_history:/home/vscode/.zsh_history:rw
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
+
+networks:
+  default:
+    name: apifromjson

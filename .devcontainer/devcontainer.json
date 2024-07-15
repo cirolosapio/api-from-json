@@ -1,0 +1,34 @@
+{
+  "dockerComposeFile": "compose.yml",
+  "workspaceFolder": "/var/www/html",
+  "service": "app",
+  "runServices": [
+    "apifromjson"
+  ],
+  "containerUser": "vscode",
+  "features": {
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-docker-outside-of-docker": {},
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-php-xdebug": {},
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-php-composer": {},
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-php-zip": {},
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-starship": {},
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-ohmyzsh": {},
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-node": {
+      "globalPackages": "serverless@3"
+    },
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-user": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "junstyle.php-cs-fixer",
+        "xdebug.php-debug",
+        "GitHub.copilot",
+        "eamodio.gitlens",
+        "rangav.vscode-thunder-client",
+        "github.vscode-github-actions"
+      ]
+    }
+  }
+}
