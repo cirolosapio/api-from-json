@@ -8,12 +8,15 @@ use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\InterfaceType;
 use Nette\PhpGenerator\PhpNamespace;
-
-$namespace = new PhpNamespace($_GET['namespace'] ?? 'Namespace');
+use Nette\PhpGenerator\Printer;
 
 $content = json_decode(file_get_contents('php://input'));
 
-$archiveName = createTarArchive('archive', getFiles($content, $_GET['name'] ?? 'Start', $namespace));
+$archiveName = createTarArchive(
+    $_GET['archive_name'] ?? 'archive',
+    getFiles($content, $_GET['interface_name'] ?? 'Json')
+);
+
 download("$archiveName.gz");
 
 function createGetSet(string $property, $value, $type = null, $class = true)
@@ -40,20 +43,17 @@ function createGetSet(string $property, $value, $type = null, $class = true)
     return [$get, $set];
 }
 
-function getFiles($json, string $name, PhpNamespace $namespace)
+function getFiles($json, string $name)
 {
     $files = [];
 
-    $className = ucfirst($name);
-    $class = new ClassType($className, $namespace);
-
-    $interfaceName = ucfirst($name).'Interface';
-    $interface = new InterfaceType($interfaceName, $namespace);
+    $class = new ClassType($className = ucfirst($name));
+    $interface = new InterfaceType($interfaceName = "{$className}Interface");
 
     foreach($json as $key => $value) {
         $type = null;
         if(is_object($value)) {
-            $files = array_merge($files, getFiles($value, $key, $namespace));
+            $files = array_merge($files, getFiles($value, $key));
             $type = ucfirst($key);
         }
 
@@ -67,12 +67,22 @@ function getFiles($json, string $name, PhpNamespace $namespace)
         $interface->addConstant('DATA_'. strtoupper($key), $key);
     }
 
-    $class->setExtends('\Magento\Framework\DataObject');
+    $class->setExtends('DataObject');
     $class->addImplement($interfaceName);
 
-    $files = array_merge($files, [$className => $class, $interfaceName => $interface]);
+    return array_merge($files, parseFile($className, $class), parseFile($interfaceName, $interface));
+}
 
-    return $files;
+function parseFile(string $name, ClassType|InterfaceType $file)
+{
+    $namespace = new PhpNamespace($_GET['namespace'] ?? 'Vendor\Module');
+    $namespace->addUse('Magento\Framework\DataObject');
+    $namespace->add($file);
+
+    $printer = new Printer();
+    $printer->setTypeResolving(false);
+
+    return [ $name => $printer->printNamespace($namespace) ];
 }
 
 function download($name)
@@ -98,7 +108,7 @@ function createTarArchive($name, $files)
     $phar = new PharData($tarFile = "/tmp/{$name}.tar");
 
     foreach ($files as $file => $content) {
-        $phar->addFromString($file, "<?php \n\n". $content);
+        $phar->addFromString($file, "<?php \n\n{$content}");
     }
 
     $phar->compress(Phar::GZ);
