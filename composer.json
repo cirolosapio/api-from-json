@@ -7,6 +7,7 @@
     }
   ],
   "require": {
-    "nette/php-generator": "^4.1"
+    "nette/php-generator": "^4.1",
+    "bref/bref": "^2.3"
   }
 }
