@@ -28,3 +28,9 @@ mkdir -p app/code && curl -d @example.json "https://drsdu2lnoa.execute-api.eu-ce
 | ------------ | ----------------------------------------------- | --------------- |
 | `namespace`  | The namespace of the module                     | `Vendor/Module` |
 | `first_name` | The name of the class/interface to be generated | `Payload`       |
+
+## Roadmap
+
+- [ ] add tests
+- [ ] generate/update di.xml
+- [ ] generate/update webapi.xml
