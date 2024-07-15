@@ -1,0 +1,29 @@
+service: apifromjson
+
+provider:
+  name: aws
+  region: eu-central-1
+  stage: prod
+  environment:
+    BREF_BINARY_RESPONSES: "1"
+  apiGateway:
+    binaryMediaTypes:
+      - "*/*"
+
+package:
+  patterns:
+    - "!.devcontainer/**"
+    - "!.github/**"
+    - "!.vscode/**"
+
+functions:
+  web:
+    handler: index.php
+    runtime: php-83-fpm
+    architecture: arm64
+    timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+    events:
+      - httpApi: "*"
+
+plugins:
+  - ./vendor/bref/bref

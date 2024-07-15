@@ -1,0 +1,12 @@
+{
+  "name": "cirolosapio/apifromjson",
+  "authors": [
+    {
+      "name": "Ciro Lo Sapio",
+      "email": "lscorionjs@gmail.com"
+    }
+  ],
+  "require": {
+    "nette/php-generator": "^4.1"
+  }
+}
