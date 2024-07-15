@@ -92,7 +92,7 @@ function createTarArchive($name, $files)
         return 'The Phar extension is not enabled.';
     }
 
-    $phar = new PharData($tarFile = "{$name}.tar");
+    $phar = new PharData($tarFile = "/tmp/{$name}.tar");
 
     foreach ($files as $file => $content) {
         $phar->addFromString($file, "<?php \n\n". $content);
