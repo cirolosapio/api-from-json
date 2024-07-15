@@ -7,13 +7,16 @@ require_once './vendor/autoload.php';
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\InterfaceType;
+use Nette\PhpGenerator\PhpNamespace;
+
+$namespace = new PhpNamespace($_GET['namespace'] ?? 'Namespace');
 
 $content = json_decode(file_get_contents('php://input'));
 
-$archiveName = createTarArchive('archive', getFiles($content));
+$archiveName = createTarArchive('archive', getFiles($content, $_GET['name'] ?? 'Start', $namespace));
 download("$archiveName.gz");
 
-function createGetSet($property, $value, $type = null, $class = true)
+function createGetSet(string $property, $value, $type = null, $class = true)
 {
     $type ??= get_debug_type($value);
 
@@ -37,20 +40,20 @@ function createGetSet($property, $value, $type = null, $class = true)
     return [$get, $set];
 }
 
-function getFiles($json, $name = 'Start')
+function getFiles($json, string $name, PhpNamespace $namespace)
 {
     $files = [];
 
     $className = ucfirst($name);
-    $class = new ClassType($className);
+    $class = new ClassType($className, $namespace);
 
     $interfaceName = ucfirst($name).'Interface';
-    $interface = new InterfaceType($interfaceName);
+    $interface = new InterfaceType($interfaceName, $namespace);
 
     foreach($json as $key => $value) {
         $type = null;
         if(is_object($value)) {
-            $files = array_merge($files, getFiles($value, $key));
+            $files = array_merge($files, getFiles($value, $key, $namespace));
             $type = ucfirst($key);
         }
 
