@@ -14,12 +14,11 @@ const MODEL_NAMESPACE = 'Model\Api';
 
 $content = json_decode(file_get_contents('php://input'));
 
-$archiveName = createTarArchive(
-    $_GET['archive_name'] ?? 'archive',
-    getFiles($content, $_GET['interface_name'] ?? 'Json')
+download(
+    createTarArchive(
+        getFiles($content, $_GET['first_name'] ?? 'Payload')
+    )
 );
-
-download("{$archiveName}.gz");
 
 function createGetSet(string $property, $value, $type = null, $class = true) {
     $type ??= get_debug_type($value);
@@ -104,12 +103,12 @@ function download($name) : void {
     unlink($name);
 }
 
-function createTarArchive($name, $files) {
+function createTarArchive($files) {
     if (!class_exists('PharData')) {
         return 'The Phar extension is not enabled.';
     }
 
-    $phar = new PharData($tarFile = "/tmp/{$name}.tar");
+    $phar = new PharData($tarFile = '/tmp/temp.tar');
 
     foreach ($files as $path => $content) {
         $phar->addFromString($path, "<?php \n\n{$content}");
@@ -119,5 +118,5 @@ function createTarArchive($name, $files) {
 
     unlink($tarFile);
 
-    return $tarFile;
+    return $tarFile . '.gz';
 }
