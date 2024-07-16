@@ -1,3 +1,5 @@
+name: api-from-json_devcontainer
+
 services:
   apifromjson:
     image: nginx:alpine-slim
