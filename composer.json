@@ -7,7 +7,13 @@
     }
   ],
   "require": {
+    "php": "^8.2",
     "nette/php-generator": "^4.1",
     "bref/bref": "^2.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "CiroLoSapio\\": "src/"
+    }
   }
 }
